@@ -35,8 +35,15 @@
 
       <!-- Contenido dinámico -->
       <div class="flex space-x-4 flex-grow">
-        <ColumnCard v-for="column in columns" :key="column.id" :title="column.title" :color="column.color"
-          :candidates="column.candidates">
+        <ColumnCard
+          v-for="column in columns"
+          :key="column.id"
+          :title="column.title"
+          :color="column.color"
+          :candidates="column.candidates"
+          :columnId="column.id"
+          @candidateDropped="handleCandidateDropped"
+        >
           <template #icon>
             <component :is="column.icon" />
           </template>
@@ -48,7 +55,7 @@
 
 <script setup lang="ts">
 import ColumnCard from '../cards/ColumnCard.vue';
-import { ref } from 'vue';
+import { ref,markRaw } from 'vue';
 
 // Tabs
 const activeTab = ref('vacantes');
@@ -59,9 +66,9 @@ const columns = ref([
     id: 'new',
     title: 'New',
     color: 'green',
-    icon: {
+    icon:markRaw ( {
       template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
-    },
+    }),
     candidates: [
       { id: '1', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
     ],
@@ -70,10 +77,24 @@ const columns = ref([
     id: 'interview',
     title: 'Interview',
     color: 'blue',
-    icon: {
+    icon:markRaw ( {
       template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.5 4.5m0 0L21 13m-1.5 1.5L10.5 6m0 0L7.5 3"/></svg>`,
-    },
+    }),
     candidates: [],
   },
 ]);
+
+// Manejo del evento candidateDropped
+function handleCandidateDropped({ candidate, targetColumnId }: { candidate: { id: string, name: string, addedBy: string, date: string }, targetColumnId: string }) {
+  // Remover candidato de su columna actual
+  columns.value.forEach((column) => {
+    column.candidates = column.candidates.filter((c) => c.id !== candidate.id);
+  });
+
+  // Añadir candidato a la columna destino
+  const targetColumn = columns.value.find((column) => column.id === targetColumnId);
+  if (targetColumn) {
+    targetColumn.candidates.push(candidate);
+  }
+}
 </script>
