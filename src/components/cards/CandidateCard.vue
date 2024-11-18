@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-4 cursor-pointer relative" draggable="true" @dragstart="onDragStart"
+  <div class="bg-white rounded-lg shadow p-4 cursor-pointer relative mb-2" draggable="true" @dragstart="onDragStart"
     @dragend="onDragEnd">
     <!-- Menú desplegable (tres puntos) -->
     <div class="absolute top-2 right-2">

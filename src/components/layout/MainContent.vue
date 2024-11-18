@@ -48,7 +48,8 @@
 <script setup lang="ts">
 import ColumnCard from '../cards/ColumnCard.vue';
 import AddCandidateModal from '../cards/AddCandidateModal.vue';
-import { ref, markRaw } from 'vue';
+import { ref } from 'vue';
+import { BeakerIcon } from '@heroicons/vue/24/solid';
 
 // Tabs
 const activeTab = ref('vacantes');
@@ -74,6 +75,7 @@ const columns = ref([
       { id: '1', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
       { id: '2', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
     ],
+    icon:""
   },
   {
     id: 'new',
@@ -91,7 +93,19 @@ interface Candidate {
   firstName: string;
   lastName: string;
 }
+// Manejo del evento candidateDropped
+function handleCandidateDropped({ candidate, targetColumnId }: { candidate: { id: string, name: string, addedBy: string, date: string }, targetColumnId: string }) {
+  // Remover candidato de su columna actual
+  columns.value.forEach((column) => {
+    column.candidates = column.candidates.filter((c) => c.id !== candidate.id);
+  });
 
+  // Añadir candidato a la columna destino
+  const targetColumn = columns.value.find((column) => column.id === targetColumnId);
+  if (targetColumn) {
+    targetColumn.candidates.push(candidate);
+  }
+}
 const handleCandidateAdded = (candidate: Candidate) => {
   const targetColumn = columns.value.find((column) => column.id === 'new');
   if (targetColumn) {
