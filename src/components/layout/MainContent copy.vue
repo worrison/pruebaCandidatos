@@ -28,13 +28,13 @@
           <input type="text" placeholder="Buscar"
             class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
         </div>
-        <button @click="openModal" class="px-4 py-2 bg-indigo-500 text-white rounded-md shadow hover:bg-indigo-600">
+        <button class="px-4 py-2 bg-indigo-500 text-white rounded-md shadow hover:bg-indigo-600">
           Añadir candidato
         </button>
       </div>
 
       <!-- Contenido dinámico -->
-      <div class="flex space-x-4 flex-grow overflow-auto">
+      <div class="flex space-x-4 flex-grow">
         <ColumnCard
           v-for="column in columns"
           :key="column.id"
@@ -50,45 +50,15 @@
         </ColumnCard>
       </div>
     </div>
-
-    <!-- Modal -->
-    <AddCandidateModal v-if="showModal" @close="closeModal" @submit="addCandidate" />
   </div>
 </template>
 
 <script setup lang="ts">
 import ColumnCard from '../cards/ColumnCard.vue';
-import AddCandidateModal from '../cards/AddCandidateModal.vue';
-import { ref, markRaw } from 'vue';
-import axios from 'axios';
+import { ref,markRaw } from 'vue';
 
 // Tabs
 const activeTab = ref('vacantes');
-
-// Modal state
-const showModal = ref(false);
-
-function openModal() {
-  showModal.value = true;
-}
-
-function closeModal() {
-  showModal.value = false;
-}
-
-// Manejo del evento candidateDropped
-function handleCandidateDropped({ candidate, targetColumnId }: { candidate: { id: string; name: string; addedBy: string; date: string }, targetColumnId: string }) {
-  // Remover candidato de su columna actual
-  columns.value.forEach((column) => {
-    column.candidates = column.candidates.filter((c) => c.id !== candidate.id);
-  });
-
-  // Añadir candidato a la columna destino
-  const targetColumn = columns.value.find((column) => column.id === targetColumnId);
-  if (targetColumn) {
-    targetColumn.candidates.push(candidate);
-  }
-}
 
 // Mock de datos dinámicos
 const columns = ref([
@@ -96,7 +66,7 @@ const columns = ref([
     id: 'new',
     title: 'New',
     color: 'green',
-    icon: markRaw({
+    icon:markRaw ( {
       template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
     }),
     candidates: [
@@ -114,25 +84,17 @@ const columns = ref([
   },
 ]);
 
-// Lógica para añadir un candidato
-async function addCandidate(candidate: { firstName: string; lastName: string }) {
-  try {
-    const response = await axios.post(`api-test.sesametime.com/recruitment/v1/candidates`, candidate);
-    console.log('Candidato añadido:', response.data);
+// Manejo del evento candidateDropped
+function handleCandidateDropped({ candidate, targetColumnId }: { candidate: { id: string, name: string, addedBy: string, date: string }, targetColumnId: string }) {
+  // Remover candidato de su columna actual
+  columns.value.forEach((column) => {
+    column.candidates = column.candidates.filter((c) => c.id !== candidate.id);
+  });
 
-    // Actualizar la columna "New" al añadir un candidato
-    const targetColumn = columns.value.find((column) => column.id === 'new');
-    if (targetColumn) {
-      targetColumn.candidates.push({
-        id: response.data.id,
-        name: candidate.firstName + ' ' + candidate.lastName,
-        addedBy: 'Añadido por ATS',
-        date: 'Hoy',
-      });
-    }
-    closeModal();
-  } catch (error) {
-    console.error('Error al añadir candidato:', error);
+  // Añadir candidato a la columna destino
+  const targetColumn = columns.value.find((column) => column.id === targetColumnId);
+  if (targetColumn) {
+    targetColumn.candidates.push(candidate);
   }
 }
 </script>
