@@ -14,8 +14,12 @@
                 </div>
 
                 <div class="flex justify-end space-x-3">
-                    <button @click="close" type="button" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded">Guardar</button>
+                    <button @click="close" type="button" class="px-4 py-2 bg-gray-300 rounded">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded">
+                        Guardar
+                    </button>
                 </div>
             </form>
         </div>
@@ -23,8 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
-import axios from 'axios';
+import { ref, defineProps } from "vue";
+import { UseAddCandidate } from "../../application/useCases/useCandidate/UseAddCandidate";
+import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
+import { backFetch } from "../../config/adapters/backFetch.adapter";
+
+const candidateRepository = new HttpCandidateRepository(backFetch);
+const addCandidateUseCases = new UseAddCandidate(candidateRepository);
 
 const props = defineProps({
     onClose: Function, // Se llamará para cerrar el modal
@@ -32,10 +41,10 @@ const props = defineProps({
 });
 
 const candidate = ref({
-    firstName: '',
-    lastName: '',
-    vacancyId: '53ba9e95-2e7c-46a1-83ad-41af90f0cf85',
-    statusId: 'bfb06383-a6a1-4bf3-a272-123401352028',
+    firstName: "",
+    lastName: "",
+    vacancyId: "53ba9e95-2e7c-46a1-83ad-41af90f0cf85",
+    statusId: "bfb06383-a6a1-4bf3-a272-123401352028",
 });
 
 // Función para cerrar el modal
@@ -48,18 +57,19 @@ const close = () => {
 // Función para manejar el envío del formulario
 const submitForm = async () => {
     try {
-        const response = await axios.post(`https://api-test.sesametime.com/recruitment/v1/candidates`, candidate.value);
-        console.log('Candidato añadido:', response.data);
+        const response = await addCandidateUseCases.execute(candidate.value);
+
+        console.log("Candidato añadido:", response);
 
         // Notificar al padre que se añadió un candidato
         if (props.onCandidateAdded) {
-            props.onCandidateAdded(response.data);
+            props.onCandidateAdded(response);
         }
 
         // Cerrar el modal
         close();
     } catch (error) {
-        console.error('Error al añadir candidato:', error);
+        console.error("Error al añadir candidato:", error);
     }
 };
 </script>
