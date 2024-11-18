@@ -14,7 +14,11 @@ import {
     ArrowUpIcon,
     ArrowDownIcon,
     MagnifyingGlassIcon,
-    ClockIcon
+    ClockIcon,
+    InboxIcon,
+    UserIcon,
+    SparklesIcon,
+    NoSymbolIcon
 
   } from '@heroicons/vue/24/outline';
   
@@ -30,6 +34,10 @@ import {
     ChevronDownIcon,
     MagnifyingGlassIcon,
     EllipsisVerticalIcon,
-    ClockIcon
+    ClockIcon,
+    InboxIcon,
+    UserIcon,
+    SparklesIcon,
+    NoSymbolIcon,
   };
   

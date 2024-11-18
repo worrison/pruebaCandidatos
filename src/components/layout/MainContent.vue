@@ -34,7 +34,8 @@
         <ColumnCard v-for="column in columns" :key="column.id" :title="column.title" :color="column.color"
           :candidates="column.candidates" :columnId="column.id" @candidateDropped="handleCandidateDropped">
           <template #icon>
-            <component :is="column.icon" />
+            <!-- <component :is="column.icon" /> -->
+            <component :is="column.icon" :class="['h-6 w-6', column.color]" />
           </template>
         </ColumnCard>
       </div>
@@ -49,7 +50,6 @@
 import ColumnCard from '../cards/ColumnCard.vue';
 import AddCandidateModal from '../cards/AddCandidateModal.vue';
 import { ref } from 'vue';
-import { BeakerIcon } from '@heroicons/vue/24/solid';
 
 // Tabs
 const activeTab = ref('vacantes');
@@ -67,22 +67,46 @@ const closeModal = () => {
 
 // Datos de las columnas
 const columns = ref([
+  // {
+  //   id: 'new',
+  //   title: 'New',
+  //   color: 'rgb(99 102 241 / var(--tw-text-opacity, 1))',
+  //   candidates: [
+  //     { id: '1', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
+  //     { id: '2', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
+  //   ],
+  //   icon: "InboxIcon"
+  // },
   {
     id: 'new',
     title: 'New',
-    color: 'green',
+    color: '#22C55E', // Color dinámico
+    icon: "InboxIcon",
     candidates: [
       { id: '1', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
       { id: '2', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
     ],
-    icon:""
   },
   {
-    id: 'new',
-    title: 'New',
-    color: 'green',
-    candidates: [
-    ],
+    id: 'interview',
+    title: 'Interview',
+    color: '#14B8A6',
+    icon: "UserIcon",
+    candidates: [],
+  },
+  {
+    id: 'hired',
+    title: 'Hired',
+    color: '#3B82F6',
+    icon: "SparklesIcon",
+    candidates: [],
+  },
+  {
+    id: 'ban',
+    title: 'Restricted',
+    color: '#ED6F6F',
+    icon: "NoSymbolIcon",
+    candidates: [],
   },
   // Más columnas aquí...
 ]);
