@@ -19,11 +19,7 @@
       <div class="flex items-center justify-between mb-6">
         <div class="relative">
           <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z"
-                clip-rule="evenodd" />
-            </svg>
+            <MagnifyingGlassIcon class="h-5 w-5 text-gray-500" />
           </span>
           <input type="text" placeholder="Buscar"
             class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200" />
@@ -35,15 +31,8 @@
 
       <!-- Contenido dinámico -->
       <div class="flex space-x-4 flex-grow overflow-auto">
-        <ColumnCard
-          v-for="column in columns"
-          :key="column.id"
-          :title="column.title"
-          :color="column.color"
-          :candidates="column.candidates"
-          :columnId="column.id"
-          @candidateDropped="handleCandidateDropped"
-        >
+        <ColumnCard v-for="column in columns" :key="column.id" :title="column.title" :color="column.color"
+          :candidates="column.candidates" :columnId="column.id" @candidateDropped="handleCandidateDropped">
           <template #icon>
             <component :is="column.icon" />
           </template>
@@ -68,11 +57,11 @@ const activeTab = ref('vacantes');
 // Modal state
 const showModal = ref(false);
 
-function openModal() {
+const openModal = () => {
   showModal.value = true;
 }
 
-function closeModal() {
+const closeModal = () => {
   showModal.value = false;
 }
 
@@ -107,7 +96,16 @@ const columns = ref([
     id: 'interview',
     title: 'Interview',
     color: 'blue',
-    icon:markRaw ( {
+    icon: markRaw({
+      template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.5 4.5m0 0L21 13m-1.5 1.5L10.5 6m0 0L7.5 3"/></svg>`,
+    }),
+    candidates: [],
+  },
+  {
+    id: 'offer',
+    title: 'Offer',
+    color: 'blue',
+    icon: markRaw({
       template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.5 4.5m0 0L21 13m-1.5 1.5L10.5 6m0 0L7.5 3"/></svg>`,
     }),
     candidates: [],
