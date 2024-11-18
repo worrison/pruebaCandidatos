@@ -49,7 +49,14 @@
 <script setup lang="ts">
 import ColumnCard from '../cards/ColumnCard.vue';
 import AddCandidateModal from '../cards/AddCandidateModal.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+
+import { UseGetCandidate } from "../../application/useCases/useCandidate/UseGetCandidate";
+import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
+import { backFetch } from "../../config/adapters/backFetch.adapter";
+
+const candidateRepository = new HttpCandidateRepository(backFetch);
+const getCandidateUseCases = new UseGetCandidate(candidateRepository);
 
 // Tabs
 const activeTab = ref('vacantes');
@@ -142,4 +149,15 @@ const handleCandidateAdded = (candidate: Candidate) => {
   }
   closeModal();
 };
+const loadCandidates = async  () => {
+    try {
+        const response = await getCandidateUseCases.execute();
+        console.log("Candidato añadido:", response);
+    } catch (error) {
+        console.error("Error al añadir candidato:", error);
+    }
+};
+onMounted(() => {
+ loadCandidates();
+});
 </script>

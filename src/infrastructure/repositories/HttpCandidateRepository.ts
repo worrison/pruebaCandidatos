@@ -18,4 +18,11 @@ export class HttpCandidateRepository implements ICandidateRepository {
     );
     return response;
   }
+
+  async get(): Promise<Candidate[]> {
+    //identificador de la vacante
+    // const vacancyId = "53ba9e95-2e7c-46a1-83ad-41af90f0cf85";
+    const response = await this.fetcher.get<Candidate[]>(`recruitment/v1/53ba9e95-2e7c-46a1-83ad-41af90f0cf85/candidates`);
+    return response;
+  }
 }

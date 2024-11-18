@@ -58,14 +58,11 @@ const close = () => {
 const submitForm = async () => {
     try {
         const response = await addCandidateUseCases.execute(candidate.value);
-
         console.log("Candidato añadido:", response);
-
         // Notificar al padre que se añadió un candidato
         if (props.onCandidateAdded) {
-            props.onCandidateAdded(response);
+            props.onCandidateAdded(response.data);
         }
-
         // Cerrar el modal
         close();
     } catch (error) {
