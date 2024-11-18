@@ -23,9 +23,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
+import { ref, defineProps } from 'vue';
+import axios from 'axios';
 
-const emits = defineEmits(['close', 'submit']);
+const props = defineProps({
+    onClose: Function, // Se llamará para cerrar el modal
+    onCandidateAdded: Function, // Se llamará para notificar que se añadió un candidato
+});
 
 const candidate = ref({
     firstName: '',
@@ -34,11 +38,28 @@ const candidate = ref({
     statusId: 'bfb06383-a6a1-4bf3-a272-123401352028',
 });
 
-function close() {
-    emits('close');
-}
+// Función para cerrar el modal
+const close = () => {
+    if (props.onClose) {
+        props.onClose();
+    }
+};
 
-function submitForm() {
-    emits('submit', candidate.value);
-}
+// Función para manejar el envío del formulario
+const submitForm = async () => {
+    try {
+        const response = await axios.post(`https://api-test.sesametime.com/recruitment/v1/candidates`, candidate.value);
+        console.log('Candidato añadido:', response.data);
+
+        // Notificar al padre que se añadió un candidato
+        if (props.onCandidateAdded) {
+            props.onCandidateAdded(response.data);
+        }
+
+        // Cerrar el modal
+        close();
+    } catch (error) {
+        console.error('Error al añadir candidato:', error);
+    }
+};
 </script>

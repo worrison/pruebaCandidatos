@@ -41,7 +41,7 @@
     </div>
 
     <!-- Modal -->
-    <AddCandidateModal v-if="showModal" @close="closeModal" @submit="addCandidate" />
+    <AddCandidateModal v-if="showModal" :onClose="closeModal" :onCandidateAdded="handleCandidateAdded" />
   </div>
 </template>
 
@@ -49,7 +49,6 @@
 import ColumnCard from '../cards/ColumnCard.vue';
 import AddCandidateModal from '../cards/AddCandidateModal.vue';
 import { ref, markRaw } from 'vue';
-import axios from 'axios';
 
 // Tabs
 const activeTab = ref('vacantes');
@@ -59,78 +58,50 @@ const showModal = ref(false);
 
 const openModal = () => {
   showModal.value = true;
-}
+};
 
 const closeModal = () => {
   showModal.value = false;
-}
+};
 
-// Manejo del evento candidateDropped
-function handleCandidateDropped({ candidate, targetColumnId }: { candidate: { id: string; name: string; addedBy: string; date: string }, targetColumnId: string }) {
-  // Remover candidato de su columna actual
-  columns.value.forEach((column) => {
-    column.candidates = column.candidates.filter((c) => c.id !== candidate.id);
-  });
-
-  // Añadir candidato a la columna destino
-  const targetColumn = columns.value.find((column) => column.id === targetColumnId);
-  if (targetColumn) {
-    targetColumn.candidates.push(candidate);
-  }
-}
-
-// Mock de datos dinámicos
+// Datos de las columnas
 const columns = ref([
   {
     id: 'new',
     title: 'New',
     color: 'green',
-    icon: markRaw({
-      template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`,
-    }),
     candidates: [
       { id: '1', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
+      { id: '2', name: 'Juan Andrés Ortega Montes', addedBy: 'Añadido por ATS', date: 'Hoy' },
     ],
   },
   {
-    id: 'interview',
-    title: 'Interview',
-    color: 'blue',
-    icon: markRaw({
-      template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.5 4.5m0 0L21 13m-1.5 1.5L10.5 6m0 0L7.5 3"/></svg>`,
-    }),
-    candidates: [],
+    id: 'new',
+    title: 'New',
+    color: 'green',
+    candidates: [
+    ],
   },
-  {
-    id: 'offer',
-    title: 'Offer',
-    color: 'blue',
-    icon: markRaw({
-      template: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.5 4.5m0 0L21 13m-1.5 1.5L10.5 6m0 0L7.5 3"/></svg>`,
-    }),
-    candidates: [],
-  },
+  // Más columnas aquí...
 ]);
 
-// Lógica para añadir un candidato
-async function addCandidate(candidate: { firstName: string; lastName: string }) {
-  try {
-    const response = await axios.post(`api-test.sesametime.com/recruitment/v1/candidates`, candidate);
-    console.log('Candidato añadido:', response.data);
-
-    // Actualizar la columna "New" al añadir un candidato
-    const targetColumn = columns.value.find((column) => column.id === 'new');
-    if (targetColumn) {
-      targetColumn.candidates.push({
-        id: response.data.id,
-        name: candidate.firstName + ' ' + candidate.lastName,
-        addedBy: 'Añadido por ATS',
-        date: 'Hoy',
-      });
-    }
-    closeModal();
-  } catch (error) {
-    console.error('Error al añadir candidato:', error);
-  }
+// Manejar la adición de un candidato
+interface Candidate {
+  id: string;
+  firstName: string;
+  lastName: string;
 }
+
+const handleCandidateAdded = (candidate: Candidate) => {
+  const targetColumn = columns.value.find((column) => column.id === 'new');
+  if (targetColumn) {
+    targetColumn.candidates.push({
+      id: candidate.id,
+      name: `${candidate.firstName} ${candidate.lastName}`,
+      addedBy: 'Añadido por ATS',
+      date: 'Hoy',
+    });
+  }
+  closeModal();
+};
 </script>
