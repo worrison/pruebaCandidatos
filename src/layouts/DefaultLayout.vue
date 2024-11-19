@@ -4,7 +4,7 @@ import Header from '../components/layout/Header.vue';
 </script>
 
 <template>
-    <div class="h-screen flex bg-gray-100 w-full overflow-x-auto">
+    <div class="h-screen flex bg-gray-100 w-full">
         <Sidebar>
             <template #logo>
                 <img src="../assets/logohr.svg" alt="Logo" class="h-12 mx-auto" />

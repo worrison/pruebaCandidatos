@@ -1,12 +1,12 @@
 <template>
-   <div class="grid grid-cols-4 h-full">
-    <div class="flex space-x-4 h-full min-w-max">
-      <ColumnCard v-for="column in columns" :key="column.id" :title="column.title" :color="column.color"
-        :candidates="column.candidates" :columnId="column.id" @candidateDropped="handleCandidateDropped">
-        <template #icon>
-          <component :is="column.icon" :class="['h-6 w-6', column.color]" />
-        </template>
-      </ColumnCard>
+  <div class="grid grid-cols-4 h-full scroll-m-8 hover:scroll-m-0">
+    <div class="flex space-x-4 h-full min-w-max ">
+            <ColumnCard v-for="column in columns" :key="column.id" :title="column.title" :color="column.color"
+              :candidates="column.candidates" :columnId="column.id" @candidateDropped="handleCandidateDropped">
+              <template #icon>
+                <component :is="column.icon" :class="['h-6 w-6', column.color]" />
+              </template>
+            </ColumnCard>
     </div>
   </div>
 </template>

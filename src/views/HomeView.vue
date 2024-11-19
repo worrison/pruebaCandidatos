@@ -27,7 +27,7 @@
   </div>
 
   <!-- Contenido dinámico -->
-  <div class="flex-grow h-full overflow-hidden">
+  <div class="flex-grow h-full  overflow-x-auto">
     <VacantesTab v-if="activeTab === 'vacantes'" />
     <CandidatosTab v-if="activeTab === 'candidatos'" />
   </div>
