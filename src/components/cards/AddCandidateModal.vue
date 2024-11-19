@@ -37,7 +37,6 @@ const addCandidateUseCases = new UseAddCandidate(candidateRepository);
 
 const props = defineProps({
     onClose: Function, // Se llamará para cerrar el modal
-    onCandidateAdded: Function, // Se llamará para notificar que se añadió un candidato
 });
 
 const candidate = ref({
@@ -59,10 +58,6 @@ const submitForm = async () => {
     try {
         const response = await addCandidateUseCases.execute(candidate.value);
         console.log("Candidato añadido:", response);
-        // Notificar al padre que se añadió un candidato
-        if (props.onCandidateAdded) {
-            props.onCandidateAdded(response.data);
-        }
         // Cerrar el modal
         close();
     } catch (error) {

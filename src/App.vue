@@ -3,11 +3,19 @@ import MainContent from './components/layout/MainContent.vue';
 import DefaultLayout from './layouts/DefaultLayout.vue';
 </script>
 <template>
-  <div class="h-screen flex bg-gray-100">
-    <div class="flex flex-col flex-grow">
       <DefaultLayout>
-        <MainContent />
+        <MainContent>
+          <RouterView/>
+        </MainContent>
       </DefaultLayout>
-    </div>
-  </div>
 </template>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+</style>
