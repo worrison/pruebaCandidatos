@@ -15,7 +15,7 @@
         </ul>
       </div>
     </div>
-
+    <EditCandidateModal v-if="showModal" :idCandidate=" props.candidate.id" :onClose="closeModal" />
     <!-- Contenido de la Tarjeta -->
     <div>
       <h3 class="font-semibold text-gray-900 truncate">{{ candidate.name }}</h3>
@@ -30,7 +30,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import EditCandidateModal from "./EditCandidateModal.vue";
 
+const showModal = ref(false);
+// Estado del menú desplegable
+const menuOpen = ref(false);
 // Props
 const props = defineProps({
   candidate: {
@@ -38,26 +42,27 @@ const props = defineProps({
     required: true,
   },
 });
+const closeModal = () => {
+  showModal.value = false;
+};
+const openModal = () => {
+  showModal.value = true;
+};
 
-// Estado del menú desplegable
-const menuOpen = ref(false);
 
 // Opciones del menú
 const options = [
   { label: "Editar" },
-  { label: "Eliminar" },
-  { label: "Ver Detalles" },
 ];
-
-// Toggle del menú
+// Toggle del menú de la card
 function toggleMenu() {
   menuOpen.value = !menuOpen.value;
 }
-
-// Manejo de clics en el menú
+// click a opcion del menu de la card
 function handleOptionClick(option: { label: string }) {
   console.log("Opción seleccionada:", option.label);
   menuOpen.value = false;
+  openModal();
 }
 
 // Drag and Drop
