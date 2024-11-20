@@ -31,9 +31,13 @@ import { ref, defineProps } from "vue";
 import { UseAddCandidate } from "../../application/useCases/useCandidate/UseAddCandidate";
 import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
 import { backFetch } from "../../config/adapters/backFetch.adapter";
+import { UseGetAllCandidate } from '../../application/useCases/useCandidate/UseCaseGetAllCandidate';
+import { useCandidateStore } from "../../stores/candidates";
 
 const candidateRepository = new HttpCandidateRepository(backFetch);
 const addCandidateUseCases = new UseAddCandidate(candidateRepository);
+const getAllCandidates = new UseGetAllCandidate(candidateRepository);
+
 
 const props = defineProps({
     onClose: Function, // Se llamará para cerrar el modal
@@ -58,6 +62,10 @@ const submitForm = async () => {
     try {
         const response = await addCandidateUseCases.execute(candidate.value);
         console.log("Candidato añadido:", response);
+        // Actualizar la lista de candidatos
+        const candidates = await getAllCandidates.execute();
+        const candidateStore = useCandidateStore();
+        candidateStore.addCandidates(candidates.data);
         // Cerrar el modal
         close();
     } catch (error) {

@@ -23,8 +23,8 @@ onMounted(async () => {
   //de esta forma solo realizamos una petición al servidor ya que los estados de las vacantes no cambian  a menudo
   const vacancyStore = useVacancyStore();
   vacancyStore.addVacancy(vacancieStates.data);
-  
-//hacemos lo mismo que con las vacantes
+
+  //hacemos lo mismo que con las vacantes
   const candidateStore = useCandidateStore();
   candidateStore.addCandidates(candidates.data);
 
@@ -33,15 +33,16 @@ onMounted(async () => {
 });
 </script>
 <template>
-      <DefaultLayout>
-        <MainContent>
-          <RouterView/>
-        </MainContent>
-      </DefaultLayout>
+  <DefaultLayout>
+    <MainContent>
+      <RouterView />
+    </MainContent>
+  </DefaultLayout>
 </template>
 
 <style>
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
