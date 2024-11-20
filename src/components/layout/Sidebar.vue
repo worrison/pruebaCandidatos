@@ -50,9 +50,9 @@
 import { ref } from 'vue';
 
 // Controlar la apertura del submenú Administrador
-const isAdminOpen = ref(false);
+const isAdminOpen = ref(true);
 // Controlar la apertura del submenú Talento
-const isOpen = ref(false);
+const isOpen = ref(true);
 
 const toggleAdmin = () => {
     isAdminOpen.value = !isAdminOpen.value;

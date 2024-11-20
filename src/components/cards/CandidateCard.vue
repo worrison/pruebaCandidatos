@@ -86,23 +86,23 @@ const options = [
   { label: "Editar" },
 ];
 // Toggle del menú de la card
-function toggleMenu() {
+const  toggleMenu = ()=> {
   menuOpen.value = !menuOpen.value;
 }
 // click a opcion del menu de la card
-function handleOptionClick(option: { label: string }) {
+const handleOptionClick = (option: { label: string }) =>{
   console.log("Opción seleccionada:", option.label);
   menuOpen.value = false;
   openModal();
 }
 
 // Drag and Drop
-function onDragStart(event: DragEvent) {
+const onDragStart = (event: DragEvent) => {
   // Guarda el ID del candidato en dataTransfer
   event.dataTransfer?.setData('text/plain', JSON.stringify({ id: props.candidate.id,firstName:props.candidate.firstName,lastName:props.candidate.lastName }));
 }
 
-function onDragEnd() {
+const  onDragEnd = ()=> {
   console.log("Drag terminado");
 }
 

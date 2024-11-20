@@ -56,7 +56,7 @@ const useCaseEditCandidate = new UseCaseUpdateCandidate(candidateRepository);
 //recuperamos los datos de los candidatos del store
 const candidateStore = useCandidateStore();
 let listCandidates = ref<Candidate[]>([]);
-computed(() => candidateStore.$state.candidates);
+// computed(() => candidateStore.$state.candidates);
 const candidate = ref<Candidate | null>(null);
 
 interface Vacancy {
