@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-4 h-full scroll-m-8 hover:scroll-m-0">
-    <div class="flex space-x-4 h-full min-w-max ">
+    <div class="flex space-x-4 h-full min-w-max  ">
       <ColumnCard v-for="column in columns" :key="column.id" :title="column.title" :color="column.color"
         :candidates="column.candidates" :columnId="column.id" @candidateDropped="handleCandidateDropped">
         <template #icon>
@@ -16,6 +16,17 @@ import ColumnCard from '../cards/ColumnCard.vue';
 import { computed, onMounted } from 'vue';
 import { useCandidateStore } from '../../stores/candidates';
 import { useVacancyStore } from '../../stores/vacancies';
+import { Candidate } from '../../domain/entities/Candidate';
+import { UseCaseUpdateCandidate } from "../../application/useCases/useCandidate/UseCaseUpdateCandidate";
+import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
+import { backFetch } from "../../config/adapters/backFetch.adapter";
+import { UseGetAllCandidate } from '../../application/useCases/useCandidate/UseCaseGetAllCandidate';
+
+
+const candidateRepository = new HttpCandidateRepository(backFetch);
+const getAllCandidates = new UseGetAllCandidate(candidateRepository);
+const useCaseEditCandidate = new UseCaseUpdateCandidate(candidateRepository);
+
 
 //recuperamos los datos de los candidatos del store
 const candidateStore = useCandidateStore();
@@ -25,48 +36,10 @@ let candidates = computed(() => candidateStore.$state.candidates);
 const vacancyStore = useVacancyStore();
 let statesVacancy = computed(() => vacancyStore.$state.vacanciesStates);
 
-// Computed para generar las columnas
-// const columns = computed(() =>
-// statesVacancy.value.map((state: { id: string; name: string; color: string; icon: string; order:number }) => {
-//   console.log("state", state);
-//     // Filtrar los candidatos que coinciden con el estado actual
-//     const filteredCandidates = candidates.value.filter(
-//       (candidate) => candidate.status.id == state.id
-//     );
 
-//     // Obtener el color e icono del primer candidato que coincide (si existe)
-//     const color = filteredCandidates[0]?.status?.color || "#000000";
-//     const icon = filteredCandidates[0]?.status?.icon || "DefaultIcon";
-
-//     // Mapear los candidatos a la estructura deseada
-//     const candidatesMapped = filteredCandidates.map((candidate) => ({
-//       id: candidate.id,
-//       firstName: candidate.firstName,
-//       lastName: candidate.lastName,
-//       creatorEmployee: candidate.addedBy,
-//       createdAt: new Date(candidate.createdAt).toLocaleDateString("es-ES", {
-//         weekday: "short",
-//         year: "numeric",
-//         month: "short",
-//         day: "numeric",
-//       }),
-//     }));
-
-//     return {
-//       id: state.id,
-//       title: state.name,
-//       color: color,
-//       icon: icon + "Icon",
-//       candidates: candidatesMapped,
-//       order: state.order,
-//     };
-//   }).sort((a, b) => a.order - b.order)
-// );
 const columns = computed(() =>
   statesVacancy.value
     .map((state: { id: string; name: string; color: string; icon: string; order: number }) => {
-      console.log("state", state);
-
       // Hardcodear iconos y colores basados en el 'state.name'
       //inicialmente lo intente sacar desde la api con el color de los candidates
       //pero no fui capaz de implementar el color que traia la api con tailwind. tailwind no me lo interpretaba
@@ -124,25 +97,40 @@ onMounted(() => {
   // statesVacancy.value = vacancyStore.$state.vacanciesStates;
 });
 
-const handleCandidateDropped = ({ candidate, targetColumnId }: { candidate: { id: string; name: string; addedBy: string; date: string }, targetColumnId: string }) => {
-  columns.value.forEach((column) => {
-    column.candidates = column.candidates.filter((c) => c.id !== candidate.id);
-  });
+const handleCandidateDropped =  ({ candidate, targetColumnId }: { candidate: { id: string; firstName: string; lastName: string }, targetColumnId: string }) => {
+  console.log("entra aqui?",candidate);
+  console.log("columnID",targetColumnId);
 
-  const targetColumn = columns.value.find((column) => column.id === targetColumnId);
-  if (targetColumn) {
-    targetColumn.candidates.push({
-      id: candidate.id,
-      firstName: candidate.name.split(' ')[0],
-      lastName: candidate.name.split(' ')[1] || '',
-      creatorEmployee: candidate.addedBy,
-      createdAt: new Date(candidate.date).toLocaleDateString("es-ES", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }),
-    });
-  }
+  updateCandidate(candidate,targetColumnId );
 };
+const updateCandidate = async (candidate: { id: string; firstName: string; lastName: string; }, targetColumnId: string) => {
+  // Add your logic to update the candidate here
+  console.log("que llega aqui de candidate?",candidate);
+  let candidatoProcesado = {
+        id:candidate.id,
+        firstName:candidate.firstName,
+        lastName:candidate.lastName,
+        statusId:targetColumnId,
+        vacancyId: '53ba9e95-2e7c-46a1-83ad-41af90f0cf85'
+    }
+    
+  try {
+    console.log("candidatoProcesado",candidatoProcesado);
+        const response = await useCaseEditCandidate.execute(candidatoProcesado as Candidate);
+        console.log("Candidato editado:", response);
+        const candidates = await getAllCandidates.execute();
+        const candidateStore = useCandidateStore();
+        candidateStore.addCandidates(candidates.data);
+        // Cerrar el modal
+        close();
+    } catch (error) {
+        console.error("Error al editar candidato:", error);
+    }
+  console.log("Updating candidate...");
+};
+
+
+
+
+
 </script>
