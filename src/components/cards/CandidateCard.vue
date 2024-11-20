@@ -1,6 +1,8 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-4 cursor-pointer relative mb-2" draggable="true" @dragstart="onDragStart"
-    @dragend="onDragEnd">
+  <div :class="[
+    'rounded-lg shadow p-4 cursor-pointer relative mb-2',
+    backgroundClass
+  ]" draggable="true" @dragstart="onDragStart" @dragend="onDragEnd">
     <!-- Menú desplegable (tres puntos) -->
     <div class="absolute top-2 right-2">
       <button class="p-1 rounded-full hover:bg-gray-200" @click.stop="toggleMenu">
@@ -15,14 +17,16 @@
         </ul>
       </div>
     </div>
-    <EditCandidateModal v-if="showModal" :idCandidate=" props.candidate.id" :onClose="closeModal" />
+    <EditCandidateModal v-if="showModal" :idCandidate="props.candidate.id" :onClose="closeModal" />
     <!-- Contenido de la Tarjeta -->
     <div>
-      <h3 class="font-semibold text-gray-900 truncate">{{ candidate.name }}</h3>
-      <p class="text-sm text-gray-500">{{ candidate.addedBy }}</p>
+      <h3 class="font-semibold text-gray-900 truncate">{{ props.candidate.firstName }} {{ props.candidate.lastName }}
+      </h3>
+      <p class="text-sm text-gray-500">Añadido por {{ props.candidate.creatorEmployee ? props.candidate.creatorEmployee
+        : 'Victor' }}</p>
       <p class="text-xs text-gray-400 flex items-center space-x-1">
         <ClockIcon class="h-5 w-5 text-gray-600 stroke-[1.5]" />
-        <span>{{ candidate.date }}</span>
+        <span>{{ formatDate(props.candidate.createdAt) }}</span>
       </p>
     </div>
   </div>
@@ -42,6 +46,8 @@ const props = defineProps({
     required: true,
   },
 });
+// Color de fondo de la tarjeta
+const backgroundClass = props.candidate?.status?.color;
 const closeModal = () => {
   showModal.value = false;
 };
@@ -73,4 +79,23 @@ function onDragStart(event: DragEvent) {
 function onDragEnd() {
   console.log("Drag terminado");
 }
+
+//formatep de fecha si es el dia actual devolvemos hoy sino devolvemos la fecha
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const today = new Date();
+
+  const isToday =
+    date.getUTCFullYear() === today.getUTCFullYear() &&
+    date.getUTCMonth() === today.getUTCMonth() &&
+    date.getUTCDate() === today.getUTCDate();
+
+  if (isToday) {
+    return 'Hoy';
+  }
+
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  return `${day}/${month}`;
+};
 </script>

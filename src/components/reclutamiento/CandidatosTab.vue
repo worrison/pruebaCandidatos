@@ -7,19 +7,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import CandidateCard from '../cards/CandidateCard.vue';
+import { useCandidateStore } from '../../stores/candidates';
 
-interface Candidate {
-  id: string;
-  name: string;
-}
 
-const candidates = ref<Candidate[]>([]);
+const candidates = ref<any[]>([]);
 
 onMounted(() => {
   // Simula la carga de datos
-  candidates.value = [
-    { id: '1', name: 'Juan Andrés Ortega Montes' },
-    { id: '2', name: 'Ana Pérez García' },
-  ];
+  const candidateStore = useCandidateStore();
+  // candidates.value = candidateStore.getCandidates;
+  candidates.value = candidateStore.$state.candidates;
+  console.log("candidates en candidates tab", candidates.value);
 });
 </script>
