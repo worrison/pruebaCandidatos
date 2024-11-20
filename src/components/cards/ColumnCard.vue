@@ -20,8 +20,6 @@ const props = defineProps({
   columnId: String,
 });
 
-console.log('ColumnCard', props);
-
 const emit = defineEmits(['candidateDropped']);
 
 function onDrop(event: DragEvent) {

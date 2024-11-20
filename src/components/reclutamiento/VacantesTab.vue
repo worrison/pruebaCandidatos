@@ -36,10 +36,16 @@ let candidates = computed(() => candidateStore.$state.candidates);
 const vacancyStore = useVacancyStore();
 let statesVacancy = computed(() => vacancyStore.$state.vacanciesStates);
 
+// Props
+const props = defineProps({
+  searchTerm: String, // Término de búsqueda recibido de la vista principal
+});
 
 const columns = computed(() =>
   statesVacancy.value
     .map((state: { id: string; name: string; color: string; icon: string; order: number }) => {
+
+      const term = props?.searchTerm?.toLowerCase().trim();
       // Hardcodear iconos y colores basados en el 'state.name'
       //inicialmente lo intente sacar desde la api con el color de los candidates
       //pero no fui capaz de implementar el color que traia la api con tailwind. tailwind no me lo interpretaba
@@ -62,6 +68,7 @@ const columns = computed(() =>
       // Filtrar los candidatos que coinciden con el estado actual
       const filteredCandidates = candidates.value.filter(
         (candidate) => candidate.status.id == state.id
+        && `${candidate.firstName} ${candidate.lastName}`.toLowerCase().includes(term || '')
       );
 
       // Mapear los candidatos a la estructura deseada
@@ -89,23 +96,14 @@ const columns = computed(() =>
     })
     .sort((a, b) => a.order - b.order) // Ordenar por el campo 'order'
 );
-console.log("que enviamos a las columns", columns.value);
 
 onMounted(() => {
-  console.log("columns", columns.value);
-  // candidates.value = candidateStore.$state.candidates;
-  // statesVacancy.value = vacancyStore.$state.vacanciesStates;
 });
 
 const handleCandidateDropped =  ({ candidate, targetColumnId }: { candidate: { id: string; firstName: string; lastName: string }, targetColumnId: string }) => {
-  console.log("entra aqui?",candidate);
-  console.log("columnID",targetColumnId);
-
   updateCandidate(candidate,targetColumnId );
 };
 const updateCandidate = async (candidate: { id: string; firstName: string; lastName: string; }, targetColumnId: string) => {
-  // Add your logic to update the candidate here
-  console.log("que llega aqui de candidate?",candidate);
   let candidatoProcesado = {
         id:candidate.id,
         firstName:candidate.firstName,
@@ -115,7 +113,6 @@ const updateCandidate = async (candidate: { id: string; firstName: string; lastN
     }
     
   try {
-    console.log("candidatoProcesado",candidatoProcesado);
         const response = await useCaseEditCandidate.execute(candidatoProcesado as Candidate);
         console.log("Candidato editado:", response);
         const candidates = await getAllCandidates.execute();
