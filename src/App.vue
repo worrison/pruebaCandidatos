@@ -27,9 +27,6 @@ onMounted(async () => {
   //hacemos lo mismo que con las vacantes
   const candidateStore = useCandidateStore();
   candidateStore.addCandidates(candidates.data);
-
-  console.log("getAllCandidates", candidates);
-  console.log("useCaseGetAllVacancieStates", vacancieStates);
 });
 </script>
 <template>

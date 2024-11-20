@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import EditCandidateModal from "./EditCandidateModal.vue";
+import EditCandidateModal from "../reclutamiento/EditCandidateModal.vue";
 
 const showModal = ref(false);
 // Estado del menú desplegable
@@ -100,7 +100,6 @@ function handleOptionClick(option: { label: string }) {
 function onDragStart(event: DragEvent) {
   // Guarda el ID del candidato en dataTransfer
   event.dataTransfer?.setData('text/plain', JSON.stringify({ id: props.candidate.id,firstName:props.candidate.firstName,lastName:props.candidate.lastName }));
-  console.log('Drag iniciado para:', props.candidate.id);
 }
 
 function onDragEnd() {

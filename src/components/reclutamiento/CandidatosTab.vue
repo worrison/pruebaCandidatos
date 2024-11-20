@@ -16,7 +16,6 @@ const props = defineProps({
 const candidateStore = useCandidateStore();
 // Filtrar dinámicamente los candidatos
 const filteredCandidates = computed(() => {
-  console.log("props que llegan", props, "---",props.searchTerm);
   const term = props?.searchTerm?.toLowerCase().trim();
   if (!term) return candidateStore.$state.candidates; // Devuelve todos si no hay búsqueda
 

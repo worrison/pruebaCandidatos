@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import VacantesTab from '../components/reclutamiento/VacantesTab.vue';
 import CandidatosTab from '../components/reclutamiento/CandidatosTab.vue';
-import AddCandidateModal from '../components/cards/AddCandidateModal.vue';
+import AddCandidateModal from '../components/reclutamiento/AddCandidateModal.vue';
 
 import { ref } from 'vue';
 

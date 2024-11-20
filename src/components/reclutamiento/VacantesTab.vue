@@ -123,7 +123,6 @@ const updateCandidate = async (candidate: { id: string; firstName: string; lastN
     } catch (error) {
         console.error("Error al editar candidato:", error);
     }
-  console.log("Updating candidate...");
 };
 
 

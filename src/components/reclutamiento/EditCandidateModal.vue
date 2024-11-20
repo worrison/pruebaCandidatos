@@ -76,7 +76,6 @@ const vacancyId = ref<string>("");
 
 // Función para manejar el envío del formulario
 const submitForm = async () => {
-    console.log('submitForm', candidate);
     let candidatoProcesado = {
         id: props.idCandidate,
         firstName: firstName.value,
