@@ -6,16 +6,16 @@
             <form @submit.prevent="submitForm">
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1">Nombre</label>
-                    <input v-model="candidate.firstName" type="text" class="w-full border rounded px-3 py-2" required />
+                    <input v-model="firstName" type="text" class="w-full border rounded px-3 py-2" required />
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1">Apellido</label>
-                    <input v-model="candidate.lastName" type="text" class="w-full border rounded px-3 py-2" required />
+                    <input v-model="lastName" type="text" class="w-full border rounded px-3 py-2" required />
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1">Estado de vacante</label>
-                    <select v-model="candidate.vacancyId" class="w-full border rounded px-3 py-2" required>
-                        <option v-for="vacancy in listStatusVacancies.data" :key="vacancy.id" :value="vacancy.id">
+                    <select v-model="statusId" class="w-full border rounded px-3 py-2" required>
+                        <option v-for="vacancy in listStatusVacancies" :key="vacancy.id" :value="vacancy.id">
                             {{ vacancy.name }}
                         </option>
                     </select>
@@ -35,108 +35,67 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from "vue";
-// import { UseAddCandidate } from "../../application/useCases/useCandidate/UseAddCandidate";
-// import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
-// import { backFetch } from "../../config/adapters/backFetch.adapter";
+import { ref, defineProps, onMounted, computed } from "vue";
+import { useVacancyStore } from '../../stores/vacancies';
+import { useCandidateStore } from '../../stores/candidates';
+import { Candidate } from '../../domain/entities/Candidate';
+import { UseCaseUpdateCandidate } from "../../application/useCases/useCandidate/UseCaseUpdateCandidate";
+import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
+import { backFetch } from "../../config/adapters/backFetch.adapter";
+import { UseGetAllCandidate } from '../../application/useCases/useCandidate/UseCaseGetAllCandidate';
 
-// const candidateRepository = new HttpCandidateRepository(backFetch);
-// const addCandidateUseCases = new UseAddCandidate(candidateRepository);
-interface Vacancy {
-    id: string;
-    name: string;
-    order: number;
-    companyId: string;
-    createdAt: string;
-    updatedAt: string;
-    vacancyId: string;
-}
-
-interface VacanciesResponse {
-    data: Vacancy[];
-    meta: {
-        currentPage: number;
-        lastPage: number;
-        total: number;
-        perPage: number;
-    };
-}
-
-const listStatusVacancies = ref<VacanciesResponse>({
-    data: [],
-    meta: {
-        currentPage: 1,
-        lastPage: 1,
-        total: 0,
-        perPage: 20
-    }
-});
-listStatusVacancies.value ={
-    "data": [
-        {
-            "id": "bfb06383-a6a1-4bf3-a272-123401352028",
-            "name": "New",
-            "order": 1,
-            "companyId": "7ae449bc-620c-4851-9d56-d25ff4094e34",
-            "createdAt": "2024-11-14T15:25:21+00:00",
-            "updatedAt": "2024-11-14T15:25:21+00:00",
-            "vacancyId": "53ba9e95-2e7c-46a1-83ad-41af90f0cf85"
-        },
-        {
-            "id": "b89fe7c0-e9a1-47e5-bdc6-3498e412af1d",
-            "name": "Accepted",
-            "order": 2,
-            "companyId": "7ae449bc-620c-4851-9d56-d25ff4094e34",
-            "createdAt": "2024-11-14T15:25:21+00:00",
-            "updatedAt": "2024-11-14T15:25:21+00:00",
-            "vacancyId": "53ba9e95-2e7c-46a1-83ad-41af90f0cf85"
-        },
-        {
-            "id": "6f936f53-0b9c-48d6-bfa6-52ee30f3eb1d",
-            "name": "Interview",
-            "order": 3,
-            "companyId": "7ae449bc-620c-4851-9d56-d25ff4094e34",
-            "createdAt": "2024-11-14T15:25:21+00:00",
-            "updatedAt": "2024-11-14T15:25:21+00:00",
-            "vacancyId": "53ba9e95-2e7c-46a1-83ad-41af90f0cf85"
-        },
-        {
-            "id": "419aa104-3e84-41d9-bc78-19ac8d473bde",
-            "name": "Selected",
-            "order": 4,
-            "companyId": "7ae449bc-620c-4851-9d56-d25ff4094e34",
-            "createdAt": "2024-11-14T15:25:21+00:00",
-            "updatedAt": "2024-11-14T15:25:21+00:00",
-            "vacancyId": "53ba9e95-2e7c-46a1-83ad-41af90f0cf85"
-        },
-        {
-            "id": "e61417ff-03ac-464b-a9cf-df2bff04d15a",
-            "name": "Discarded",
-            "order": 5,
-            "companyId": "7ae449bc-620c-4851-9d56-d25ff4094e34",
-            "createdAt": "2024-11-14T15:25:21+00:00",
-            "updatedAt": "2024-11-14T15:25:21+00:00",
-            "vacancyId": "53ba9e95-2e7c-46a1-83ad-41af90f0cf85"
-        }
-    ],
-    "meta": {
-        "currentPage": 1,
-        "lastPage": 1,
-        "total": 5,
-        "perPage": 20
-    }
-}
+//props
 const props = defineProps({
     onClose: Function, // Se llamará para cerrar el modal
     idCandidate: String,
 });
 
-const candidate = ref({
-    firstName: "",
-    lastName: "",
-    vacancyId: "53ba9e95-2e7c-46a1-83ad-41af90f0cf85",
-    statusId: "bfb06383-a6a1-4bf3-a272-123401352028",
-});
+const candidateRepository = new HttpCandidateRepository(backFetch);
+const getAllCandidates = new UseGetAllCandidate(candidateRepository);
+const useCaseEditCandidate = new UseCaseUpdateCandidate(candidateRepository);
+//recuperamos los datos de los candidatos del store
+const candidateStore = useCandidateStore();
+let listCandidates = ref<Candidate[]>([]);
+computed(() => candidateStore.$state.candidates);
+const candidate = ref<Candidate | null>(null);
+
+interface Vacancy {
+    id: string;
+    name: string;
+}
+//recuperamos los datos de las vacantes del store
+const vacancyStore = useVacancyStore();
+let listStatusVacancies = ref<Vacancy[]>([]);
+listStatusVacancies = computed(() => vacancyStore.$state.vacanciesStates);
+
+// Campos reactivos para el formulario
+const firstName = ref<string>("");
+const lastName = ref<string>("");
+const statusId = ref<string>("");
+const vacancyId = ref<string>("");
+
+// Función para manejar el envío del formulario
+const submitForm = async () => {
+    console.log('submitForm', candidate);
+    let candidatoProcesado = {
+        id: props.idCandidate,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        statusId: statusId.value,
+        vacancyId: vacancyId.value
+    }
+    try {
+        const response = await useCaseEditCandidate.execute(candidatoProcesado as Candidate);
+        console.log("Candidato editado:", response);
+        const candidates = await getAllCandidates.execute();
+        const candidateStore = useCandidateStore();
+        candidateStore.addCandidates(candidates.data);
+        // Cerrar el modal
+        close();
+    } catch (error) {
+        console.error("Error al editar candidato:", error);
+    }
+};
 
 // Función para cerrar el modal
 const close = () => {
@@ -144,22 +103,15 @@ const close = () => {
         props.onClose();
     }
 };
-
-// Función para manejar el envío del formulario
-const submitForm = async () => {
-    try {
-        //tenemos que llamar a editar candidato
-        //const response = await addCandidateUseCases.execute(candidate.value);
-       // console.log("Candidato añadido:", response);
-       console.log("Candidato a editar:", candidate.value);
-        // Cerrar el modal
-        close();
-    } catch (error) {
-        console.error("Error al añadir candidato:", error);
-    }
-};
-
 onMounted(() => {
-    console.log(props.idCandidate);
+    candidate.value = candidateStore.$state.candidates.find((c) => c.id === props.idCandidate)
+    listStatusVacancies.value = vacancyStore.$state.vacanciesStates;
+    listCandidates.value = candidateStore.$state.candidates
+    if (candidate.value) {
+        firstName.value = candidate.value.firstName || "";
+        lastName.value = candidate.value.lastName || "";
+        statusId.value = candidate.value.statusId || "";
+        vacancyId.value = candidate.value.vacancyId || "";
+    }
 });
 </script>

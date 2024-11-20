@@ -7,14 +7,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
-import { UseGetCandidate } from "../../application/useCases/useCandidate/UseGetCandidate";
-import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
-import { backFetch } from "../../config/adapters/backFetch.adapter";
+// import { UseGetCandidate } from "../../application/useCases/useCandidate/UseCaseUpdateCandidate";
+// import { HttpCandidateRepository } from "../../infrastructure/repositories/HttpCandidateRepository";
+// import { backFetch } from "../../config/adapters/backFetch.adapter";
 
-const candidateRepository = new HttpCandidateRepository(backFetch);
-const getCandidateUseCases = new UseGetCandidate(candidateRepository);
+// const candidateRepository = new HttpCandidateRepository(backFetch);
+// const getCandidateUseCases = new UseGetCandidate(candidateRepository);
 
 
 // const loadCandidates = async () => {

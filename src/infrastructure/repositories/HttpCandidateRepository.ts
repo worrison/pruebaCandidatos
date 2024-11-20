@@ -33,6 +33,7 @@ export class HttpCandidateRepository implements ICandidateRepository {
   }
 
   async updateCandidate(candidate: Candidate): Promise<any> {
+    console.log("llega en infraestructura",candidate);
     try {
       const response = await this.fetcher.put<any>(
         `recruitment/v1/candidates/${candidate.id}`,
