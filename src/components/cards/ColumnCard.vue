@@ -1,9 +1,9 @@
 <template>
   <div class="flex-none w-[296px] bg-gray-50 rounded-lg p-4 shadow-md" @dragover.prevent @drop="onDrop">
-    <div :style="{ backgroundColor: color }" class="h-1 rounded-t-md mb-4"></div>
+    <div :style="{ backgroundColor: props.color }" class="h-1 rounded-t-md mb-4"></div>
     <h2 class="font-semibold mb-4 flex items-center" :style="{ color }">
-      <slot name="icon"></slot>
-      {{ title }}
+      <slot name="icon" class="pr-2"></slot>
+      <span class="ml-2 text-lg">{{ title }} </span>
     </h2>
     <CandidateCard v-for="candidate in candidates" :key="candidate.id" :candidate="candidate" />
   </div>
@@ -16,9 +16,11 @@ import CandidateCard from './CandidateCard.vue';
 const props = defineProps({
   title: String,
   color: String,
-  candidates: Array<{ id: string;[key: string]: any }>,
+  candidates: Array<any>,
   columnId: String,
 });
+
+console.log('ColumnCard', props);
 
 const emit = defineEmits(['candidateDropped']);
 

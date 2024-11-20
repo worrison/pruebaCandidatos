@@ -20,8 +20,8 @@
     <EditCandidateModal v-if="showModal" :idCandidate="props.candidate.id" :onClose="closeModal" />
     <!-- Contenido de la Tarjeta -->
     <div>
-      <h3 class="font-semibold text-gray-900 truncate">{{ props.candidate.firstName }} {{ props.candidate.lastName }}
-      </h3>
+      <h2 class="font-semibold text-gray-900 truncate text-lg">{{ props.candidate.firstName }} {{ props.candidate.lastName }}
+      </h2>
       <p class="text-sm text-gray-500">Añadido por {{ props.candidate.creatorEmployee ? props.candidate.creatorEmployee
         : 'Victor' }}</p>
       <p class="text-xs text-gray-400 flex items-center space-x-1">

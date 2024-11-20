@@ -10,7 +10,6 @@ export const useCandidateStore = defineStore("candidates", {
       state.candidates.filter((candidate: any) =>
         candidate.firstName.toLowerCase().includes(searchTerm.toLowerCase())
       ),
-      getCandidates: (state) => state.candidates
   },
   actions: {
     // Añadir candidatos

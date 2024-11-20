@@ -4,7 +4,6 @@ import {
     ChevronDownIcon,
     EllipsisVerticalIcon 
   } from '@heroicons/vue/24/solid';
-  import { BeakerIcon } from '@heroicons/vue/24/solid'
   
   import {
     StarIcon,
@@ -18,7 +17,8 @@ import {
     InboxIcon,
     UserIcon,
     SparklesIcon,
-    NoSymbolIcon
+    NoSymbolIcon,
+    CheckIcon,
 
   } from '@heroicons/vue/24/outline';
   
@@ -39,5 +39,6 @@ import {
     UserIcon,
     SparklesIcon,
     NoSymbolIcon,
+    CheckIcon
   };
   

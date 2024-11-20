@@ -12,6 +12,8 @@ module.exports = {
         secondary: '#6C63FF',
         grey:'#64748B',
         danger: '#e3342f',
+        'ssm-turquoise': '#40E0D0',
+
       }
     },
   },
