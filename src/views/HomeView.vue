@@ -18,7 +18,7 @@
       <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
         <MagnifyingGlassIcon class="h-5 w-5 text-gray-500" />
       </span>
-      <input type="text" placeholder="Buscar"
+      <input type="text" placeholder="Buscar" v-model="searchTerm"
         class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:ring-blue-200" />
     </div>
     <button @click="openModal" class="px-4 py-2 bg-primary text-white rounded-xl shadow hover:bg-indigo-600">
@@ -28,8 +28,8 @@
 
   <!-- Contenido dinámico -->
   <div class="flex-grow h-full  overflow-x-auto">
-    <VacantesTab v-if="activeTab === 'vacantes'" />
-    <CandidatosTab v-if="activeTab === 'candidatos'" />
+    <VacantesTab v-if="activeTab === 'vacantes'" :search-term="searchTerm" />
+    <CandidatosTab v-if="activeTab === 'candidatos'" :search-term="searchTerm" />
   </div>
   <AddCandidateModal v-if="showModal" :onClose="closeModal" />
 </template>
@@ -41,6 +41,8 @@ import AddCandidateModal from '../components/cards/AddCandidateModal.vue';
 
 import { ref } from 'vue';
 
+//busqueda de candidatos
+const searchTerm = ref('');
 // Tabs
 const activeTab = ref('vacantes');
 // Modal state
@@ -49,7 +51,6 @@ const showModal = ref(false);
 const openModal = () => {
   showModal.value = true;
 };
-
 const closeModal = () => {
   showModal.value = false;
 };
